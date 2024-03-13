@@ -1,0 +1,88 @@
+TICKET_PRICES = {
+    "one_day": {
+        "one_adult": 20.00,
+        "one_child": 12.00,
+        "one_senior": 16.00,
+        "family": 60.00,
+        "group": 15.00
+    },
+    "two_days": {
+        "one_adult": 30.00,
+        "one_child": 18.00,
+        "one_senior": 24.00,
+        "family": 90.00,
+        "group": 22.50
+    }
+}
+
+EXTRA_ATTRACTIONS = {
+    "lion_feeding": 2.50,
+    "penguin_feeding": 2.00,
+    "evening_barbecue": 5.00
+}
+
+BOOKINGS = {}
+
+def display_ticket_options():
+    print("Ticket Options:")
+    print("One-Day Tickets:")
+    for ticket_type, price in TICKET_PRICES["one_day"].items():
+        print(f"{ticket_type.capitalize()}: ${price:.2f}")
+    print("\nTwo-Day Tickets:")
+    for ticket_type, price in TICKET_PRICES["two_days"].items():
+        print(f"{ticket_type.capitalize()}: ${price:.2f}")
+
+def display_extra_attractions():
+    print("\nExtra Attractions:")
+    for attraction, price in EXTRA_ATTRACTIONS.items():
+        print(f"{attraction.replace('_', ' ').title()}: ${price:.2f}")
+
+def process_booking():
+    total_cost = 0
+
+    print("\nTicket Booking:")
+    ticket_type = input("Enter ticket type (one_adult, one_child, one_senior, family, group): ")
+    num_tickets = int(input("Enter the number of tickets: "))
+    num_days = int(input("Enter the number of days (1 or 2): "))
+
+    if num_days not in [1, 2]:
+        print("Invalid number of days.")
+        return
+
+    if ticket_type not in TICKET_PRICES["one_day"]:
+        print("Invalid ticket type.")
+        return
+
+    total_cost += TICKET_PRICES[f"{'one' if num_days == 1 else 'two'}_days"][ticket_type] * num_tickets
+
+    attraction_choice = input("Would you like to add any extra attractions? (yes/no): ").lower()
+    if attraction_choice == "yes":
+        for attraction, price in EXTRA_ATTRACTIONS.items():
+            num_visitors = int(input(f"Enter the number of visitors for {attraction.replace('_', ' ').title()}: "))
+            total_cost += price * num_visitors
+
+    booking_number = len(BOOKINGS) + 1
+    BOOKINGS[booking_number] = {"ticket_type": ticket_type, "num_tickets": num_tickets, "num_days": num_days, "total_cost": total_cost}
+
+    print(f"\nBooking details for Booking #{booking_number}:")
+    print("Ticket Type:", ticket_type.capitalize())
+    print("Number of Tickets:", num_tickets)
+    print("Number of Days:", num_days)
+    print("Total Cost: $", total_cost)
+
+def main():
+    print("Welcome to Wildlife Park Ticketing System\n")
+
+    display_ticket_options()
+    display_extra_attractions()
+
+    while True:
+        process_booking()
+        another_booking = input("\nDo you want to make another booking? (yes/no): ").lower()
+        if another_booking != "yes":
+            break
+
+    print("\nAll bookings processed. Thank you!")
+
+if __name__ == "__main__":
+    main()
