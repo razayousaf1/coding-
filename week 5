@@ -1,0 +1,66 @@
+def calculate_discount(frequent_parking_number):
+    if len(frequent_parking_number) != 5:
+        return False
+    digits = [int(digit) for digit in frequent_parking_number[:-1]]
+    check_digit = int(frequent_parking_number[-1])
+    if sum((i + 1) * digit for i, digit in enumerate(digits)) % 11 == check_digit:
+        return True
+    return False
+
+def calculate_parking_fee(day, arrival_time, hours_parked, frequent_parking_number):
+    prices = {
+        "Sunday": {"max_stay": 8, "price_8_16": 2.00, "price_16_midnight": 2.00},
+        "Monday": {"max_stay": 2, "price_8_16": 10.00, "price_16_midnight": 2.00},
+        "Tuesday": {"max_stay": 2, "price_8_16": 10.00, "price_16_midnight": 2.00},
+        "Wednesday": {"max_stay": 2, "price_8_16": 10.00, "price_16_midnight": 2.00},
+        "Thursday": {"max_stay": 2, "price_8_16": 10.00, "price_16_midnight": 2.00},
+        "Friday": {"max_stay": 2, "price_8_16": 10.00, "price_16_midnight": 2.00},
+        "Saturday": {"max_stay": 4, "price_8_16": 3.00, "price_16_midnight": 2.00}
+    }
+
+    if arrival_time < 8 or arrival_time >= 24:
+        return "Parking not allowed between Midnight and 08:00."
+
+    max_stay = prices[day]["max_stay"]
+    price_before_16 = min(hours_parked, max_stay) * prices[day]["price_8_16"]
+    if arrival_time < 16:
+        total_fee = price_before_16
+    else:
+        total_fee = price_before_16 + (hours_parked - max_stay) * prices[day]["price_16_midnight"]
+
+    if arrival_time >= 16:
+        total_fee *= 0.5  # 50% discount after 16:00
+    else:
+        total_fee *= 0.9  # 10% discount before 16:00
+
+    if frequent_parking_number and calculate_discount(frequent_parking_number):
+        total_fee *= 0.5  # 50% discount with correct frequent parking number
+
+    return total_fee
+
+def main():
+    daily_total = 0
+    while True:
+        day = input("Enter the day of the week: ")
+        arrival_time = int(input("Enter the arrival time (hours): "))
+        hours_parked = int(input("Enter the number of hours parked: "))
+        frequent_parking_number = input("Enter your frequent parking number (if any): ")
+
+        fee = calculate_parking_fee(day, arrival_time, hours_parked, frequent_parking_number)
+        print(f"Total parking fee: ${fee:.2f}")
+
+        payment = float(input("Enter the amount paid: "))
+        if payment < fee:
+            print("Error: Insufficient payment.")
+            continue
+
+        daily_total += fee
+        print(f"Payment received: ${payment:.2f}")
+
+        end_of_day = input("Is it the end of the day? (yes/no): ")
+        if end_of_day.lower() == "yes":
+            print(f"Daily total: ${daily_total:.2f}")
+            break
+
+if __name__ == "__main__":
+    main()
