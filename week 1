@@ -1,0 +1,65 @@
+def validate_weight(weight):
+    try:
+        weight = float(weight)
+        if weight < 20 or weight > 200:
+            return False
+        return True
+    except ValueError:
+        return False
+
+def input_weights_and_names(num_pupils):
+    weights = []
+    names = []
+    for i in range(num_pupils):
+        while True:
+            name = input(f"Enter name of pupil {i+1}: ")
+            weight = input(f"Enter weight of pupil {i+1} in kilograms: ")
+            if validate_weight(weight):
+                weights.append(float(weight))
+                names.append(name)
+                break
+            else:
+                print("Invalid weight. Please enter a weight between 20 and 200 kilograms.")
+    return names, weights
+
+def calculate_weight_difference(initial_weights, final_weights):
+    differences = []
+    for i in range(len(initial_weights)):
+        difference = final_weights[i] - initial_weights[i]
+        differences.append(difference)
+    return differences
+
+def main():
+    num_pupils = 30
+
+    # Task 1: Input and store weights and names
+    print("Task 1: Input and store weights and names")
+    names, initial_weights = input_weights_and_names(num_pupils)
+    print("Names and weights recorded for the class:")
+    for name, weight in zip(names, initial_weights):
+        print(f"{name}: {weight} kilograms")
+
+    # Task 2: Input and store final weights
+    print("\nTask 2: Input and store final weights")
+    final_weights = []
+    for i in range(num_pupils):
+        while True:
+            weight = input(f"Enter weight of pupil {i+1} on the last day of term in kilograms: ")
+            if validate_weight(weight):
+                final_weights.append(float(weight))
+                break
+            else:
+                print("Invalid weight. Please enter a weight between 20 and 200 kilograms.")
+
+    # Task 3: Calculate and output weight differences
+    print("\nTask 3: Output pupils with weight differences greater than 2.5 kilograms")
+    differences = calculate_weight_difference(initial_weights, final_weights)
+    for name, difference in zip(names, differences):
+        if abs(difference) > 2.5:
+            if difference > 0:
+                print(f"{name} gained {abs(difference):.2f} kilograms.")
+            else:
+                print(f"{name} lost {abs(difference):.2f} kilograms.")
+
+if __name__ == "__main__":
+    main()
