@@ -1,0 +1,68 @@
+NUM_COWS = 10  # Example number of cows
+DAYS_IN_WEEK = 7
+
+def record_yield():
+    cow_data = {}
+    for day in range(1, DAYS_IN_WEEK + 1):
+        print(f"Day {day}:")
+        for cow in range(1, NUM_COWS + 1):
+            while True:
+                yield_volume = input(f"Enter milk yield for cow {cow} on day {day} (litres): ")
+                try:
+                    yield_volume = float(yield_volume)
+                    if yield_volume >= 0:
+                        cow_data.setdefault(cow, []).append(yield_volume)
+                        break
+                    else:
+                        print("Volume cannot be negative.")
+                except ValueError:
+                    print("Invalid input. Please enter a valid number.")
+    return cow_data
+
+def calculate_statistics(cow_data):
+    total_volume = sum(sum(yields) for yields in cow_data.values())
+    average_yield_per_cow = total_volume / (NUM_COWS * DAYS_IN_WEEK)
+    return total_volume, average_yield_per_cow
+
+def identify_most_productive_and_low_yield_cows(cow_data):
+    max_yield = 0
+    most_productive_cow = None
+    low_yield_cows = []
+
+    for cow, yields in cow_data.items():
+        weekly_yield = sum(yields)
+        if weekly_yield > max_yield:
+            max_yield = weekly_yield
+            most_productive_cow = cow
+        if len([yield_vol for yield_vol in yields if yield_vol < 12]) >= 4:
+            low_yield_cows.append(cow)
+    
+    return most_productive_cow, low_yield_cows
+
+def main():
+    # Task 1: Record the yield
+    print("Task 1: Record the yield")
+    cow_data = record_yield()
+
+    # Task 2: Calculate the statistics
+    print("\nTask 2: Calculate the statistics")
+    total_volume, average_yield_per_cow = calculate_statistics(cow_data)
+    print(f"Total weekly volume of milk for the herd: {int(total_volume)} litres")
+    print(f"Average yield per cow in a week: {int(average_yield_per_cow)} litres")
+
+    # Task 3: Identify the most productive cow and cows with low volume
+    print("\nTask 3: Identify the most productive cow and cows with low volume")
+    most_productive_cow, low_yield_cows = identify_most_productive_and_low_yield_cows(cow_data)
+    if most_productive_cow is not None:
+        print(f"Most productive cow this week: {most_productive_cow}")
+    else:
+        print("No data recorded for cows.")
+    
+    if low_yield_cows:
+        print("Cows with less than 12 litres of milk for four or more days:")
+        print(low_yield_cows)
+    else:
+        print("No cows produced less than 12 litres of milk for four or more days this week.")
+
+if __name__ == "__main__":
+main()
