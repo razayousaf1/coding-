@@ -1,0 +1,91 @@
+class AuctionItem:
+    def __init__(self, item_number, description, reserve_price):
+        self.item_number = item_number
+        self.description = description
+        self.reserve_price = reserve_price
+        self.num_bids = 0
+        self.highest_bid = 0
+
+    def place_bid(self, bid_amount):
+        if bid_amount > self.highest_bid:
+            self.highest_bid = bid_amount
+            self.num_bids += 1
+            return True
+        else:
+            return False
+
+def auction_setup():
+    items = []
+    num_items = int(input("Enter the number of items in the auction (must be at least 10): "))
+    if num_items < 10:
+        print("Error: There must be at least 10 items in the auction.")
+        return None
+    for i in range(num_items):
+        item_number = input(f"Enter item number for item {i+1}: ")
+        description = input(f"Enter description for item {i+1}: ")
+        reserve_price = float(input(f"Enter reserve price for item {i+1}: $"))
+        item = AuctionItem(item_number, description, reserve_price)
+        items.append(item)
+    return items
+
+def buyer_bids(items):
+    buyer_number = input("Enter buyer number: ")
+    item_number = input("Enter item number: ")
+    bid_amount = float(input("Enter bid amount: $"))
+
+    for item in items:
+        if item.item_number == item_number:
+            if item.place_bid(bid_amount):
+                print("Bid successfully placed.")
+            else:
+                print("Error: Bid amount must be higher than the current highest bid.")
+            return
+
+    print("Error: Item not found.")
+
+def end_auction(items):
+    total_fee = 0
+    sold_items = 0
+    items_below_reserve = 0
+    unsold_items = 0
+
+    print("Items sold:")
+    for item in items:
+        if item.highest_bid >= item.reserve_price:
+            sold_items += 1
+            fee = item.highest_bid * 0.1
+            total_fee += fee
+            print(f"Item Number: {item.item_number}, Final Bid: ${item.highest_bid}, Fee: ${fee}")
+        elif item.num_bids > 0:
+            items_below_reserve += 1
+            print(f"Item Number: {item.item_number}, Final Bid: ${item.highest_bid} (Below Reserve)")
+        else:
+            unsold_items += 1
+            print(f"Item Number: {item.item_number}, No Bids")
+
+    print(f"\nTotal Fee for Sold Items: ${total_fee}")
+    print(f"Items Sold: {sold_items}")
+    print(f"Items Below Reserve: {items_below_reserve}")
+    print(f"Unsold Items: {unsold_items}")
+
+def main():
+    # Task 1: Auction setup
+    print("Task 1: Auction setup")
+    items = auction_setup()
+    if not items:
+        return
+
+    # Task 2: Buyer bids
+    print("\nTask 2: Buyer bids")
+    while True:
+        buyer_bids(items)
+        another_bid = input("Do you want to place another bid? (yes/no): ")
+        if another_bid.lower() != 'yes':
+            break
+
+    # Task 3: End of auction
+    print("\nTask 3: End of auction")
+    end_auction(items)
+
+if __name__ == "__main__":
+    main()
