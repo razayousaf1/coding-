@@ -1,0 +1,70 @@
+def calculate_cost(num_people):
+    if num_people < MIN_SENIORS or num_people > MAX_SENIORS:
+        return None  # Invalid number of people
+
+    for range_limits, costs in COST_RANGES.items():
+        if range_limits[0] <= num_people <= range_limits[1]:
+            total_cost = costs['coach']
+            total_cost += num_people * costs['meal']
+            total_cost += num_people * costs['ticket']
+            
+            # Adding carers if needed
+            num_carers = MIN_CARERS
+            if num_people > EXTRA_CARERS_THRESHOLD:
+                num_carers += 1
+            total_cost += num_carers * COST_PER_CARER
+            
+            return total_cost, total_cost / num_people  # Total cost and cost per person
+
+def main():
+    # Task 1: Calculate total cost and cost per person
+    print("Task 1: Calculate total cost and cost per person")
+    num_people = int(input("Enter the number of senior citizens interested in the outing: "))
+    cost_result = calculate_cost(num_people)
+    if cost_result:
+        total_cost, cost_per_person = cost_result
+        print(f"Total cost: ${total_cost:.2f}")
+        print(f"Cost per person: ${cost_per_person:.2f}")
+    else:
+        print("Invalid number of people. Please enter a number between 10 and 36.")
+
+    # Task 2: Record names and amounts paid
+    print("\nTask 2: Record names and amounts paid")
+    if cost_result:
+        names = []
+        amounts_paid = []
+        while True:
+            name = input("Enter name of person (or 'done' to finish): ")
+            if name.lower() == 'done':
+                break
+            while True:
+                try:
+                    amount = float(input("Enter amount paid: $"))
+                    if amount < 0:
+                        raise ValueError("Amount paid cannot be negative.")
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a valid amount.")
+            names.append(name)
+            amounts_paid.append(amount)
+        total_collected = sum(amounts_paid)
+        print("List of people on the outing:")
+        for name, amount in zip(names, amounts_paid):
+            print(f"{name}: ${amount:.2f}")
+        print(f"Total amount collected: ${total_collected:.2f}")
+
+    # Task 3: Identify break-even point or profit
+    print("\nTask 3: Identify break-even point or profit")
+    if cost_result and total_collected:
+        if total_collected >= total_cost:
+            profit = total_collected - total_cost
+            if profit > 0:
+                print(f"The outing made a profit of ${profit:.2f}.")
+            else:
+                print("The outing broke even.")
+        else:
+            loss = total_cost - total_collected
+            print(f"The outing incurred a loss of ${loss:.2f}.")
+
+if __name__ == "__main__":
+    main()
